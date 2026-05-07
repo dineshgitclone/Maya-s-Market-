@@ -1,47 +1,79 @@
 <?php
 
-$botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
+// Health check web server response
+if (php_sapi_name() !== 'cli') {
+    echo "Bot running";
+    exit;
+}
+
+$botToken = "YOUR_BOT_TOKEN";
 $api = "https://api.telegram.org/bot$botToken/";
 
-$last_update_id = 0;
+$offset = 0;
 
 while (true) {
 
-    $updates = json_decode(file_get_contents(
-        $api . "getUpdates?offset=" . ($last_update_id + 1) . "&timeout=30"
-    ), true);
+    $response = @file_get_contents(
+        $api . "getUpdates?timeout=10&offset=$offset"
+    );
+
+    if ($response === false) {
+        sleep(2);
+        continue;
+    }
+
+    $updates = json_decode($response, true);
 
     if (isset($updates["result"])) {
 
         foreach ($updates["result"] as $update) {
 
-            $last_update_id = $update["update_id"];
+            $offset = $update["update_id"] + 1;
 
-            $chat_id = $update["message"]["chat"]["id"];
-            $text = $update["message"]["text"];
+            if (isset($update["message"])) {
 
-            if ($text == "/start") {
+                $chat_id = $update["message"]["chat"]["id"];
+                $text = $update["message"]["text"] ?? "";
 
-                $message = "🚀 Before continuing, join our sponsor channels.";
+                if ($text == "/start") {
 
-                $keyboard = [
-                    "inline_keyboard" => [
-                        [
-                            ["text" => "Join Channel 1", "url" => "https://t.me/channel1"],
-                            ["text" => "Join Channel 2", "url" => "https://t.me/channel2"]
-                        ],
-                        [
-                            ["text" => "Join Channel 3", "url" => "https://t.me/channel3"],
-                            ["text" => "Join Channel 4", "url" => "https://t.me/channel4"]
+                    $keyboard = [
+                        "inline_keyboard" => [
+                            [
+                                [
+                                    "text" => "Join Channel 1",
+                                    "url" => "https://t.me/channel1"
+                                ]
+                            ],
+                            [
+                                [
+                                    "text" => "Join Channel 2",
+                                    "url" => "https://t.me/channel2"
+                                ]
+                            ],
+                            [
+                                [
+                                    "text" => "Join Channel 3",
+                                    "url" => "https://t.me/channel3"
+                                ]
+                            ],
+                            [
+                                [
+                                    "text" => "Join Channel 4",
+                                    "url" => "https://t.me/channel4"
+                                ]
+                            ]
                         ]
-                    ]
-                ];
+                    ];
 
-                file_get_contents($api . "sendMessage?" . http_build_query([
-                    "chat_id" => $chat_id,
-                    "text" => $message,
-                    "reply_markup" => json_encode($keyboard)
-                ]));
+                    @file_get_contents(
+                        $api . "sendMessage?" . http_build_query([
+                            "chat_id" => $chat_id,
+                            "text" => "🚀 Before continuing, join our sponsor channels.",
+                            "reply_markup" => json_encode($keyboard)
+                        ])
+                    );
+                }
             }
         }
     }
