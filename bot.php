@@ -1,38 +1,67 @@
 <?php
 
+error_reporting(E_ALL);
+
+// =========================
+// TELEGRAM BOT CONFIG
+// =========================
+
 $botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
 $api = "https://api.telegram.org/bot".$botToken."/";
 
+// =========================
+// POLLING SETTINGS
+// =========================
+
 $offset = 0;
 
-echo "Polling Started...\n";
+echo "Bot Started...\n";
+
+// =========================
+// MAIN LOOP
+// =========================
 
 while (true) {
 
+    // GET NEW UPDATES FAST
     $response = @file_get_contents(
-        $api . "getUpdates?timeout=10&offset=".$offset
+        $api . "getUpdates?offset=".$offset."&timeout=1"
     );
 
+    // IF FAILED
     if ($response === false) {
-        sleep(2);
+
+        echo "Connection Failed\n";
+
+        usleep(500000);
         continue;
     }
 
+    // DECODE RESPONSE
     $data = json_decode($response, true);
 
+    // CHECK NEW MESSAGES
     if (isset($data["result"])) {
 
         foreach ($data["result"] as $update) {
 
+            // SAVE UPDATE ID
             $offset = $update["update_id"] + 1;
 
+            // CHECK MESSAGE
             if (isset($update["message"])) {
 
                 $chat_id = $update["message"]["chat"]["id"];
                 $text = $update["message"]["text"] ?? "";
 
+                echo "Message: ".$text."\n";
+
+                // START COMMAND
                 if ($text == "/start") {
 
+                    $message = "🚀 Before continuing, you need to join our sponsor channels.";
+
+                    // BUTTONS
                     $keyboard = [
                         "inline_keyboard" => [
 
@@ -63,23 +92,26 @@ while (true) {
                                     "url" => "https://t.me/channel4"
                                 ]
                             ]
+
                         ]
                     ];
 
-                    @file_get_contents(
+                    // SEND MESSAGE
+                    $send = @file_get_contents(
                         $api . "sendMessage?" . http_build_query([
                             "chat_id" => $chat_id,
-                            "text" => "🚀 Before continuing, join our sponsor channels.",
+                            "text" => $message,
                             "reply_markup" => json_encode($keyboard)
                         ])
                     );
 
-                    echo "Message Sent\n";
+                    echo "Reply Sent\n";
                 }
             }
         }
     }
 
-    sleep(1);
+    // SMALL DELAY
+    usleep(300000);
 }
 ?>
