@@ -1,49 +1,51 @@
 <?php
 
-$botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
-$website = "https://api.telegram.org/bot".$botToken;
+$botToken = "YOUR_BOT_TOKEN";
+$api = "https://api.telegram.org/bot$botToken/";
 
-$update = file_get_contents("php://input");
-$update = json_decode($update, TRUE);
+$last_update_id = 0;
 
-$chat_id = $update["message"]["chat"]["id"];
-$text = $update["message"]["text"];
+while (true) {
 
-// Welcome message
-if ($text == "/start") {
+    $updates = json_decode(file_get_contents(
+        $api . "getUpdates?offset=" . ($last_update_id + 1) . "&timeout=30"
+    ), true);
 
-    $message = "🚀 Before continuing, you must join our sponsor channels:\n\nAfter joining, you can proceed.";
+    if (isset($updates["result"])) {
 
-    $keyboard = [
-        "inline_keyboard" => [
-            [
-                ["text" => "Join Channel 1", "url" => "https://t.me/channel1"],
-                ["text" => "Join Channel 2", "url" => "https://t.me/channel2"]
-            ],
-            [
-                ["text" => "Join Channel 3", "url" => "https://t.me/channel3"],
-                ["text" => "Join Channel 4", "url" => "https://t.me/channel4"]
-            ],
-            [
-                ["text" => "✅ I Joined", "callback_data" => "check_join"]
-            ]
-        ]
-    ];
+        foreach ($updates["result"] as $update) {
 
-    sendMessage($chat_id, $message, $keyboard);
-}
+            $last_update_id = $update["update_id"];
 
-// Send Message Function
-function sendMessage($chat_id, $text, $keyboard = null) {
-    global $website;
+            $chat_id = $update["message"]["chat"]["id"];
+            $text = $update["message"]["text"];
 
-    $url = $website."/sendMessage?chat_id=".$chat_id."&text=".urlencode($text)."&parse_mode=HTML";
+            if ($text == "/start") {
 
-    if ($keyboard != null) {
-        $url .= "&reply_markup=".json_encode($keyboard);
+                $message = "🚀 Before continuing, join our sponsor channels.";
+
+                $keyboard = [
+                    "inline_keyboard" => [
+                        [
+                            ["text" => "Join Channel 1", "url" => "https://t.me/channel1"],
+                            ["text" => "Join Channel 2", "url" => "https://t.me/channel2"]
+                        ],
+                        [
+                            ["text" => "Join Channel 3", "url" => "https://t.me/channel3"],
+                            ["text" => "Join Channel 4", "url" => "https://t.me/channel4"]
+                        ]
+                    ]
+                ];
+
+                file_get_contents($api . "sendMessage?" . http_build_query([
+                    "chat_id" => $chat_id,
+                    "text" => $message,
+                    "reply_markup" => json_encode($keyboard)
+                ]));
+            }
+        }
     }
 
-    file_get_contents($url);
+    sleep(1);
 }
-
 ?>
