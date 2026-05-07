@@ -1,11 +1,11 @@
 <?php
 
-$botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
+$botToken = "YOUR_BOT_TOKEN";
 $api = "https://api.telegram.org/bot".$botToken."/";
 
 $offset = 0;
 
-echo "Bot Started...\n";
+echo "Polling Started...\n";
 
 while (true) {
 
@@ -14,10 +14,7 @@ while (true) {
     );
 
     if ($response === false) {
-
-        echo "Connection Failed...\n";
         sleep(2);
-
         continue;
     }
 
