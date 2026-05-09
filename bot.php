@@ -168,7 +168,7 @@ while (true) {
 
                         "photo" => "https://techzsky.com/Mm.png",
 
-                        "caption" => "🚀 Join all channels and click verify button.",
+                        "caption" => "🚀 Before continuing, join all sponsor channels and click verify button.",
 
                         "reply_markup" => json_encode($keyboard)
 
@@ -178,7 +178,7 @@ while (true) {
 
                     CURLOPT_CONNECTTIMEOUT => 1,
 
-                    CURLOPT_TIMEOUT_MS => 800,
+                    CURLOPT_TIMEOUT_MS => 1200,
 
                     CURLOPT_NOSIGNAL => 1,
 
@@ -238,11 +238,12 @@ while (true) {
 
                     ],
 
-                    CURLOPT_RETURNTRANSFER => false,
+                    // IMPORTANT FOR POPUP
+                    CURLOPT_RETURNTRANSFER => true,
 
                     CURLOPT_CONNECTTIMEOUT => 1,
 
-                    CURLOPT_TIMEOUT_MS => 800,
+                    CURLOPT_TIMEOUT_MS => 3000,
 
                     CURLOPT_NOSIGNAL => 1,
 
@@ -252,9 +253,15 @@ while (true) {
 
                     CURLOPT_FRESH_CONNECT => false,
 
+                    CURLOPT_SSL_VERIFYPEER => false,
+
+                    CURLOPT_SSL_VERIFYHOST => false,
+
                 ]);
 
-                curl_exec($answer);
+                $result = curl_exec($answer);
+
+                echo $result."\n";
 
                 curl_close($answer);
 
