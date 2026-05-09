@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 // =========================
 
 $botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
+
 $api = "https://api.telegram.org/bot".$botToken."/";
 
 $offset = 0;
@@ -91,111 +92,182 @@ while (true) {
         $offset = $update["update_id"] + 1;
 
         // =========================
-        // MESSAGE CHECK
+        // MESSAGE
         // =========================
 
-        if (!isset($update["message"])) {
-            continue;
+        if (isset($update["message"])) {
+
+            $chat_id = $update["message"]["chat"]["id"];
+
+            $text = $update["message"]["text"] ?? "";
+
+            echo "Message: ".$text."\n";
+
+            // =========================
+            // START COMMAND
+            // =========================
+
+            if ($text == "/start") {
+
+                $keyboard = [
+                    "inline_keyboard" => [
+
+                        [
+                            [
+                                "text" => "Join Channel 1",
+                                "url" => "https://t.me/channel1"
+                            ]
+                        ],
+
+                        [
+                            [
+                                "text" => "Join Channel 2",
+                                "url" => "https://t.me/channel2"
+                            ]
+                        ],
+
+                        [
+                            [
+                                "text" => "Join Channel 3",
+                                "url" => "https://t.me/channel3"
+                            ]
+                        ],
+
+                        [
+                            [
+                                "text" => "Join Channel 4",
+                                "url" => "https://t.me/channel4"
+                            ]
+                        ],
+
+                        [
+                            [
+                                "text" => "✅ Verify",
+                                "callback_data" => "verify"
+                            ]
+                        ]
+
+                    ]
+                ];
+
+                // =========================
+                // SEND PHOTO MESSAGE
+                // =========================
+
+                $send = curl_init();
+
+                curl_setopt_array($send, [
+
+                    CURLOPT_URL => $api . "sendPhoto",
+
+                    CURLOPT_POST => true,
+
+                    CURLOPT_POSTFIELDS => [
+
+                        "chat_id" => $chat_id,
+
+                        "photo" => "https://techzsky.com/Mm.png",
+
+                        "caption" => "🚀 Join all channels and click verify button.",
+
+                        "reply_markup" => json_encode($keyboard)
+
+                    ],
+
+                    CURLOPT_RETURNTRANSFER => false,
+
+                    CURLOPT_CONNECTTIMEOUT => 1,
+
+                    CURLOPT_TIMEOUT_MS => 800,
+
+                    CURLOPT_NOSIGNAL => 1,
+
+                    CURLOPT_TCP_NODELAY => true,
+
+                    CURLOPT_FORBID_REUSE => false,
+
+                    CURLOPT_FRESH_CONNECT => false,
+
+                    CURLOPT_SSL_VERIFYPEER => false,
+
+                    CURLOPT_SSL_VERIFYHOST => false,
+
+                ]);
+
+                curl_exec($send);
+
+                curl_close($send);
+
+                echo "Photo Reply Sent\n";
+            }
         }
 
-        $chat_id = $update["message"]["chat"]["id"];
-
-        $text = $update["message"]["text"] ?? "";
-
-        echo "Message: ".$text."\n";
-
         // =========================
-        // START COMMAND
+        // CALLBACK QUERY
         // =========================
 
-        if ($text == "/start") {
+        if (isset($update["callback_query"])) {
 
-            $keyboard = [
-                "inline_keyboard" => [
+            $callback_id = $update["callback_query"]["id"];
 
-                    [
-                        [
-                            "text" => "Join Channel 1",
-                            "url" => "https://t.me/channel1"
-                        ]
-                    ],
+            $callback_data = $update["callback_query"]["data"];
 
-                    [
-                        [
-                            "text" => "Join Channel 2",
-                            "url" => "https://t.me/channel2"
-                        ]
-                    ],
-
-                    [
-                        [
-                            "text" => "Join Channel 3",
-                            "url" => "https://t.me/channel3"
-                        ]
-                    ],
-
-                    [
-                        [
-                            "text" => "Join Channel 4",
-                            "url" => "https://t.me/channel4"
-                        ]
-                    ]
-
-                ]
-            ];
+            echo "Button Clicked: ".$callback_data."\n";
 
             // =========================
-            // SEND MESSAGE
+            // VERIFY BUTTON
             // =========================
 
-            $send = curl_init();
+            if ($callback_data == "verify") {
 
-            curl_setopt_array($send, [
+                $answer = curl_init();
 
-                CURLOPT_URL => $api . "sendMessage",
+                curl_setopt_array($answer, [
 
-                CURLOPT_POST => true,
+                    CURLOPT_URL => $api . "answerCallbackQuery",
 
-                CURLOPT_POSTFIELDS => [
+                    CURLOPT_POST => true,
 
-                    "chat_id" => $chat_id,
+                    CURLOPT_POSTFIELDS => [
 
-                    "text" => "🚀 Before continuing, join our sponsor channels.",
+                        "callback_query_id" => $callback_id,
 
-                    "reply_markup" => json_encode($keyboard)
+                        "text" => "⚠️ Please join all channels first.",
 
-                ],
+                        "show_alert" => true
 
-                // Faster response
-                CURLOPT_RETURNTRANSFER => false,
+                    ],
 
-                CURLOPT_CONNECTTIMEOUT => 1,
+                    CURLOPT_RETURNTRANSFER => false,
 
-                CURLOPT_TIMEOUT_MS => 800,
+                    CURLOPT_CONNECTTIMEOUT => 1,
 
-                CURLOPT_NOSIGNAL => 1,
+                    CURLOPT_TIMEOUT_MS => 800,
 
-                CURLOPT_TCP_NODELAY => true,
+                    CURLOPT_NOSIGNAL => 1,
 
-                CURLOPT_FORBID_REUSE => false,
+                    CURLOPT_TCP_NODELAY => true,
 
-                CURLOPT_FRESH_CONNECT => false,
+                    CURLOPT_FORBID_REUSE => false,
 
-                CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_FRESH_CONNECT => false,
 
-                CURLOPT_SSL_VERIFYHOST => false,
+                ]);
 
-            ]);
+                curl_exec($answer);
 
-            curl_exec($send);
+                curl_close($answer);
 
-            curl_close($send);
-
-            echo "Reply Sent\n";
+                echo "Verify Popup Sent\n";
+            }
         }
     }
 
-    // Tiny CPU relax
+    // =========================
+    // TINY CPU RELAX
+    // =========================
+
     usleep(10000);
 }
+
 ?>
