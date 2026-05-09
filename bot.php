@@ -115,28 +115,28 @@ while (true) {
                         [
                             [
                                 "text" => "Join Channel 1",
-                                "url" => "https://t.me/channel1"
+                                "url" => "https://telegram.me/+ur8USU3dbXgzNzQ1"
                             ]
                         ],
 
                         [
                             [
                                 "text" => "Join Channel 2",
-                                "url" => "https://t.me/channel2"
+                                "url" => "https://telegram.me/+HMFa3EHiYrQxNDZl"
                             ]
                         ],
 
                         [
                             [
                                 "text" => "Join Channel 3",
-                                "url" => "https://t.me/channel3"
+                                "url" => "https://telegram.me/+Ga_uWQ56MkBmNzM1"
                             ]
                         ],
 
                         [
                             [
                                 "text" => "Join Channel 4",
-                                "url" => "https://t.me/channel4"
+                                "url" => "https://telegram.me/+OJ9VmFoNE9g4YmQ1"
                             ]
                         ],
 
@@ -168,7 +168,7 @@ while (true) {
 
                         "photo" => "https://techzsky.com/Mm.png",
 
-                        "caption" => "🚀 Before continuing, join all sponsor channels and click verify button.",
+                        "caption" => "🚀 Join all channels and click verify button.",
 
                         "reply_markup" => json_encode($keyboard)
 
