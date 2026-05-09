@@ -2,33 +2,52 @@
 
 error_reporting(E_ALL);
 
-$botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
+// =========================
+// BOT CONFIG
+// =========================
 
+$botToken = "8606429040:AAF4WQGPpfpL8kgd6FjzAgLXcq1XfFAfWZo";
 $api = "https://api.telegram.org/bot".$botToken."/";
 
 $offset = 0;
 
-echo "Fast Polling Bot Started...\n";
+echo "Ultra Fast Polling Bot Started...\n";
+
+// =========================
+// MAIN LOOP
+// =========================
 
 while (true) {
 
     // =========================
-    // CURL REQUEST
+    // GET UPDATES
     // =========================
 
     $ch = curl_init();
 
-    curl_setopt($ch, CURLOPT_URL,
-        $api . "getUpdates?offset=".$offset."&timeout=1"
-    );
+    curl_setopt_array($ch, [
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        CURLOPT_URL => $api . "getUpdates?offset=".$offset."&timeout=0",
 
-    // Kill slow connection quickly
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        CURLOPT_RETURNTRANSFER => true,
 
-    // Max total request time
-    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        CURLOPT_CONNECTTIMEOUT => 1,
+
+        CURLOPT_TIMEOUT_MS => 900,
+
+        CURLOPT_NOSIGNAL => 1,
+
+        CURLOPT_TCP_NODELAY => true,
+
+        CURLOPT_FORBID_REUSE => false,
+
+        CURLOPT_FRESH_CONNECT => false,
+
+        CURLOPT_SSL_VERIFYPEER => false,
+
+        CURLOPT_SSL_VERIFYHOST => false,
+
+    ]);
 
     $response = curl_exec($ch);
 
@@ -37,23 +56,27 @@ while (true) {
     curl_close($ch);
 
     // =========================
-    // FAILED REQUEST
+    // CONNECTION FAILED
     // =========================
 
     if ($response === false || $httpCode != 200) {
 
-        echo "Retry...\n";
+        echo "Connection Failed\n";
 
-        usleep(200000);
+        usleep(10000);
 
         continue;
     }
 
+    // =========================
+    // DECODE JSON
+    // =========================
+
     $data = json_decode($response, true);
 
-    if (!isset($data["result"])) {
+    if (empty($data["result"])) {
 
-        usleep(200000);
+        usleep(10000);
 
         continue;
     }
@@ -64,90 +87,115 @@ while (true) {
 
     foreach ($data["result"] as $update) {
 
+        // IMPORTANT
         $offset = $update["update_id"] + 1;
 
-        if (isset($update["message"])) {
+        // =========================
+        // MESSAGE CHECK
+        // =========================
 
-            $chat_id = $update["message"]["chat"]["id"];
+        if (!isset($update["message"])) {
+            continue;
+        }
 
-            $text = $update["message"]["text"] ?? "";
+        $chat_id = $update["message"]["chat"]["id"];
 
-            echo "Message: ".$text."\n";
+        $text = $update["message"]["text"] ?? "";
 
-            // =========================
-            // START COMMAND
-            // =========================
+        echo "Message: ".$text."\n";
 
-            if ($text == "/start") {
+        // =========================
+        // START COMMAND
+        // =========================
 
-                $keyboard = [
-                    "inline_keyboard" => [
+        if ($text == "/start") {
 
+            $keyboard = [
+                "inline_keyboard" => [
+
+                    [
                         [
-                            [
-                                "text" => "Join Channel 1",
-                                "url" => "https://t.me/channel1"
-                            ]
-                        ],
-
-                        [
-                            [
-                                "text" => "Join Channel 2",
-                                "url" => "https://t.me/channel2"
-                            ]
-                        ],
-
-                        [
-                            [
-                                "text" => "Join Channel 3",
-                                "url" => "https://t.me/channel3"
-                            ]
-                        ],
-
-                        [
-                            [
-                                "text" => "Join Channel 4",
-                                "url" => "https://t.me/channel4"
-                            ]
+                            "text" => "Join Channel 1",
+                            "url" => "https://t.me/channel1"
                         ]
+                    ],
 
+                    [
+                        [
+                            "text" => "Join Channel 2",
+                            "url" => "https://t.me/channel2"
+                        ]
+                    ],
+
+                    [
+                        [
+                            "text" => "Join Channel 3",
+                            "url" => "https://t.me/channel3"
+                        ]
+                    ],
+
+                    [
+                        [
+                            "text" => "Join Channel 4",
+                            "url" => "https://t.me/channel4"
+                        ]
                     ]
-                ];
 
-                // =========================
-                // SEND MESSAGE
-                // =========================
+                ]
+            ];
 
-                $send = curl_init();
+            // =========================
+            // SEND MESSAGE
+            // =========================
 
-                curl_setopt($send, CURLOPT_URL,
-                    $api . "sendMessage"
-                );
+            $send = curl_init();
 
-                curl_setopt($send, CURLOPT_POST, true);
+            curl_setopt_array($send, [
 
-                curl_setopt($send, CURLOPT_POSTFIELDS, [
+                CURLOPT_URL => $api . "sendMessage",
+
+                CURLOPT_POST => true,
+
+                CURLOPT_POSTFIELDS => [
+
                     "chat_id" => $chat_id,
+
                     "text" => "🚀 Before continuing, join our sponsor channels.",
+
                     "reply_markup" => json_encode($keyboard)
-                ]);
 
-                curl_setopt($send, CURLOPT_RETURNTRANSFER, true);
+                ],
 
-                curl_setopt($send, CURLOPT_CONNECTTIMEOUT, 2);
+                // Faster response
+                CURLOPT_RETURNTRANSFER => false,
 
-                curl_setopt($send, CURLOPT_TIMEOUT, 3);
+                CURLOPT_CONNECTTIMEOUT => 1,
 
-                curl_exec($send);
+                CURLOPT_TIMEOUT_MS => 800,
 
-                curl_close($send);
+                CURLOPT_NOSIGNAL => 1,
 
-                echo "Reply Sent\n";
-            }
+                CURLOPT_TCP_NODELAY => true,
+
+                CURLOPT_FORBID_REUSE => false,
+
+                CURLOPT_FRESH_CONNECT => false,
+
+                CURLOPT_SSL_VERIFYPEER => false,
+
+                CURLOPT_SSL_VERIFYHOST => false,
+
+            ]);
+
+            curl_exec($send);
+
+            curl_close($send);
+
+            echo "Reply Sent\n";
         }
     }
 
-    // Tiny delay
-    usleep(200000);
+    // Tiny CPU relax
+    usleep(10000);
 }
 ?>
