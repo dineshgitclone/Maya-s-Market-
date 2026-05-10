@@ -168,7 +168,7 @@ while (true) {
 
                         "photo" => "https://techzsky.com/Mm.png",
 
-                        "caption" => "🚀 Join all channels and click verify button.",
+                        "caption" => "ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಸೇರಿ ಮತ್ತು Verify ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ 👇",
 
                         "reply_markup" => json_encode($keyboard)
 
@@ -232,7 +232,7 @@ while (true) {
 
                         "callback_query_id" => $callback_id,
 
-                        "text" => "⚠️ Please join all channels first.",
+                        "text" => "⚠️ದಯವಿಟ್ಟು ಮೊದಲು ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಸೇರಿ.",
 
                         "show_alert" => true
 
