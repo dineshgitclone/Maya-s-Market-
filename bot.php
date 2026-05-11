@@ -114,35 +114,35 @@ while (true) {
 
                         [
                             [
-                                "text" => "Join Channel 1",
+                                "text" => "ಚಾನೆಲ್‌ 1",
                                 "url" => "https://telegram.me/+ur8USU3dbXgzNzQ1"
                             ]
                         ],
 
                         [
                             [
-                                "text" => "Join Channel 2",
+                                "text" => "ಚಾನೆಲ್‌ 2",
                                 "url" => "https://telegram.me/+HMFa3EHiYrQxNDZl"
                             ]
                         ],
 
                         [
                             [
-                                "text" => "Join Channel 3",
+                                "text" => "ಚಾನೆಲ್‌ 3",
                                 "url" => "https://telegram.me/+Ga_uWQ56MkBmNzM1"
                             ]
                         ],
 
                         [
                             [
-                                "text" => "Join Channel 4",
+                                "text" => "ಚಾನೆಲ್‌ 4",
                                 "url" => "https://telegram.me/+OJ9VmFoNE9g4YmQ1"
                             ]
                         ],
 
                         [
                             [
-                                "text" => "✅ Verify",
+                                "text" => "✅ Try Now",
                                 "callback_data" => "verify"
                             ]
                         ]
@@ -168,7 +168,7 @@ while (true) {
 
                         "photo" => "https://techzsky.com/Mm.png",
 
-                        "caption" => "ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಸೇರಿ ಮತ್ತು Verify ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ 👇",
+                        "caption" => "ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಜಾಯಿನ್ ರಿಕ್ವೆಸ್ಟ್ ಕಳುಹಿಸಿ ನಂತರ ✅Try Now ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ👇",
 
                         "reply_markup" => json_encode($keyboard)
 
@@ -232,7 +232,7 @@ while (true) {
 
                         "callback_query_id" => $callback_id,
 
-                        "text" => "⚠️ದಯವಿಟ್ಟು ಮೊದಲು ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಸೇರಿ.",
+                        "text" => "⚠️ದಯವಿಟ್ಟು ಮೊದಲು ಎಲ್ಲಾ ಚಾನೆಲ್‌ಗಳಿಗೆ ಜಾಯಿನ್ ರಿಕ್ವೆಸ್ಟ್ ಕಳುಹಿಸಿ.",
 
                         "show_alert" => true
 
